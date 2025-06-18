@@ -10,3 +10,12 @@ mots qui s'affiche avec traduction direct
 systeme de flashcard?
 moyen de selectionner les mots que l'on veut mettre dans les flashcard/revisions
 trier les mots dans un certains ordre ex alphabetique, taux de reussite dans le jeu ?
+
+
+
+a faire:
+db avec user mdphash salt historique?
+systeme de hashage authentification login creation de compte etc
+interface de login et signin authentification etc 
+systeme de sauvegarde des mots qui ont été ratés?
+historique et classements joueurs

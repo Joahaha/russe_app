@@ -39,46 +39,36 @@ class TraductionGame:
         self.btn_quit = tk.Button(self.frame_top, text="Quitter", command=master.quit, fg="red")
         self.btn_quit.pack(side=tk.LEFT, padx=10)
 
-        # Mot à traduire
         self.label_word = tk.Label(master, text="", font=("Arial", 16, "bold"))
         self.label_word.pack(pady=15)
 
-        # Champ de saisie (pour le mode quiz)
         self.entry = tk.Entry(master, font=("Arial", 14))
         self.entry.pack(pady=5)
         self.entry.bind('<Return>', self.next_word_or_check)
         self.entry.bind('<Escape>', self.quitter)  
-        self.entry.bind('<Tab>', self.change_mode)  # Permet de changer de mode avec la touche Tab
-        # self.entry.bind('<Escape>', lambda: self.master.quit())
-        
+        self.entry.bind('<Tab>', self.change_mode)         
 
 
-        # Bouton valider (pour le mode quiz)
         self.btn_valider = tk.Button(master, text="Valider", command=self.check_answer)
         self.btn_valider.pack(pady=5)
 
         self.btn_hint = tk.Button(master, text="Indice", command=self.show_hint)
         self.btn_hint.pack(pady=5)
 
-        # Bouton afficher la traduction (pour le mode flashcard)
         self.btn_show = tk.Button(master, text="Voir la traduction", command=self.show_translation)
         self.btn_next_flash = tk.Button(master, text="Mot suivant", command=self.next_word)
 
-        # Score
         self.label_score = tk.Label(master, text="Score : 0/0")
         self.label_score.pack(pady=10)
 
-        # Message de résultat
         self.label_result = tk.Label(master, text="", font=("Arial", 12))
         self.label_result.pack(pady=5)
 
-        # Mot suivant (pour le mode quiz)
         self.btn_next = tk.Button(master, text="Mot suivant", command=self.next_word)
         self.btn_next.pack(pady=5)
 
         self.set_mode_quiz()  
 
-    #  Gestion des modes et sens 
     def confirmer_et_reset(self, action):
         if self.total > 0:
             confirmation = messagebox.askyesno(
