@@ -1,10 +1,18 @@
-from engine.graphique_russe import TraductionGame
 import tkinter as tk
+from engine.game_window import MainWindow
+# from auth_window import AuthWindow  
 
-def main():
+def launch_game(username=None):
+    """Lance la fenêtre principale du jeu, éventuellement avec un utilisateur."""
     root = tk.Tk()
-    game = TraductionGame(root)
+    app = MainWindow()
     root.mainloop()
 
+# def launch_auth():
+#     root = tk.Tk()
+#     app = AuthWindow(root, on_success=launch_game)
+#     root.mainloop()
+
 if __name__ == "__main__":
-    main()
+    # launch_auth()
+    launch_game()
