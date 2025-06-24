@@ -31,11 +31,12 @@ class MainWindow(BaseWindow):
             'total': 0,
             'inverse': False,
             'flashcard_mode': False,
-            'current_pair': None,
+            'current_pair':'',
             'answered': False
         }
         
         self.create_widgets()
+        self.set_current_pair(get_word_pair())
         self.bind_shortcuts()
         self.set_mode_quiz()
 
@@ -72,6 +73,7 @@ class MainWindow(BaseWindow):
             self.check_answer()
 
     def check_answer(self):
+        self.game_state['total'] += 1
         user_input = self.main_content.entry.get().strip().lower()
         correct_answer = self.get_correct_answer()
         
@@ -98,18 +100,40 @@ class MainWindow(BaseWindow):
         )
 
     def toggle_answer_controls(self):
-        self.main_content.btn_valider.config(state=tk.DISABLED)
-        self.main_content.btn_next.config(state=tk.NORMAL)
+        self.game_controls.btn_valider.config(text="Mot suivant", command=self.next_word)
         self.game_state['answered'] = True
 
     def show_hint(self):
+        pair = self.game_state['current_pair']
+        if self.game_state['inverse']:
+            hint = pair[0]
+        else:
+            hint = pair[1]
+        hint = hint[:2] + "..."  # Show first two letters as a hint
+        self.main_content.show_result(f"Indice : {hint}", "blue")
+        self.game_controls.btn_hint.config(state=tk.DISABLED)
+
         pass
 
     def show_translation(self):
         pass
 
     def next_word(self):
-        pass
+        self.game_state['current_pair'] = get_word_pair()
+        self.game_state['answered'] = False
+        
+        pair = self.game_state['current_pair']
+        if self.game_state['inverse']:
+            word_to_show = pair[1]
+        else:
+            word_to_show = pair[0]
+        
+        self.main_content.label_word.config(text=word_to_show)
+        self.main_content.entry.delete(0, tk.END)
+        self.main_content.show_result("", "black")
+        
+        self.update_score_display()
+        self.game_controls.update_buttons(self.is_flashcard_mode(), self.game_state['answered'])
 
     def set_russe_fr(self):
         pass
@@ -118,7 +142,31 @@ class MainWindow(BaseWindow):
         pass
 
     def set_mode_quiz(self):
-        pass
+        self.reset_score()
+        self.game_controls.btn_show.place_forget()
+        self.set_quiz()
+        self.game_controls.update_buttons(self.is_flashcard_mode(), self.is_answered())
+    
+        
+    
+    def set_flashcard(self):
+        self.game_state['flashcard_mode'] = True
+
+    def set_quiz(self):
+        self.game_state['flashcard_mode'] = False
+
+    def is_flashcard_mode(self):
+        print("Flashcard mode:", self.game_state['flashcard_mode'])
+        return self.game_state['flashcard_mode']
+    
+    def is_answered(self):
+        return self.game_state['answered']
+    
+    def set_current_pair(self, pair):
+        self.game_state['current_pair'] = pair
+        self.main_content.label_word.config(text=pair[0] if not self.game_state['inverse'] else pair[1])
+        self.main_content.entry.delete(0, tk.END)
+        self.main_content.show_result("", "black")
 
     def set_mode_flashcard(self):
         pass
@@ -132,6 +180,7 @@ class MainWindow(BaseWindow):
             self.set_mode_quiz()
         elif mode == 'flashcard':
             self.set_mode_flashcard()
+        
         
     
 class TranslationControls(tk.Frame):
@@ -206,11 +255,27 @@ class GameControls(tk.Frame):
                                 command=self.controller.show_hint)
         self.btn_show = tk.Button(self, text="Voir la traduction", 
                                 command=self.controller.show_translation)
-        self.btn_next = tk.Button(self, text="Mot suivant", 
-                                command=self.controller.next_word)
         
         self.btn_valider.pack(pady=5)
         self.btn_hint.pack(pady=5)
+        self.btn_show.pack(pady=5)
+    
+    def update_buttons(self,flashcard_mode,answered):
+        if flashcard_mode:
+            self.btn_hint.place_forget()    
+            self.btn_show.pack(pady=5)
+            print("Flashcard mode")
+
+        else:
+            print("Quiz mode")
+            if answered:
+                self.btn_valider.config(text="Mot suivant", command=self.controller.next_word)
+            else:
+                self.btn_valider.config(text="Valider", command=self.controller.check_answer)
+            self.btn_valider.config(state=tk.NORMAL)
+            self.btn_hint.config(state=tk.NORMAL)
+            self.btn_show.pack_forget()
+        
 
 if __name__ == "__main__":
     app = MainWindow()
