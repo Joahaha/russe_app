@@ -1,5 +1,5 @@
 import tkinter as tk
-from engine.game_window import MainWindow
+from windows.main_window import MainWindow
 # from auth_window import AuthWindow  
 
 def launch_game(username=None):
